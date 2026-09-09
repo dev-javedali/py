@@ -14,10 +14,16 @@ def get_location_names():
 
 @app.route('/predict_home_price', methods=['GET', 'POST'])
 def predict_home_price():
-    total_sqft = float(request.form['total_sqft'])
-    location = request.form['location']
-    bhk = int(request.form['bhk'])
-    bath = int(request.form['bath'])
+    try:
+        total_sqft = float(request.form['total_sqft'])
+        location = request.form['location']
+        bhk = int(request.form['bhk'])
+        bath = int(request.form['bath'])
+    except (KeyError, TypeError, ValueError):
+        return jsonify({'error': 'Invalid input. Provide total_sqft, location, bhk, and bath.'}), 400
+
+    if total_sqft <= 0 or bhk <= 0 or bath <= 0 or not location.strip():
+        return jsonify({'error': 'total_sqft, bhk, and bath must be positive and location is required.'}), 400
 
     response = jsonify({
         'estimated_price': util.get_estimated_price(location,total_sqft,bhk,bath)

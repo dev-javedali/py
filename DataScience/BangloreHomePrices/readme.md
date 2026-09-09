@@ -1,75 +1,96 @@
-![](BHP_website.PNG)
+# Bangalore Home Price Prediction
 
-This data science project series walks through step by step process of how to build a real estate price prediction website. We will first build a model using sklearn and linear regression using banglore home prices dataset from kaggle.com. Second step would be to write a python flask server that uses the saved model to serve http requests. Third component is the website built in html, css and javascript that allows user to enter home square ft area, bedrooms etc and it will call python flask server to retrieve the predicted price. During model building we will cover almost all data science concepts such as data load and cleaning, outlier detection and removal, feature engineering, dimensionality reduction, gridsearchcv for hyperparameter tunning, k fold cross validation etc. Technology and tools wise this project covers,
+![Bangalore Home Price Prediction UI](BHP_website.PNG)
 
-1. Python
-2. Numpy and Pandas for data cleaning
-3. Matplotlib for data visualization
-4. Sklearn for model building
-5. Jupyter notebook, visual studio code and pycharm as IDE
-6. Python flask for http server
-7. HTML/CSS/Javascript for UI
+This project demonstrates an end-to-end machine learning application for predicting Bangalore home prices. It covers data preparation, feature engineering, outlier handling, model selection, a Flask API, and a browser-based UI.
 
-# Deploy this app to cloud (AWS EC2)
+## Project structure
 
-1. Create EC2 instance using amazon console, also in security group add a rule to allow HTTP incoming traffic
-2. Now connect to your instance using a command like this,
+```text
+BangloreHomePrices/
+├── client/                 # HTML, CSS, and JavaScript UI
+├── model/                  # Training notebook and model metadata
+├── server/                 # Flask API and saved model artifacts
+├── nginx_files/            # Nginx deployment configuration
+└── readme.md
 ```
-ssh -i "C:\Users\Viral\.ssh\Banglore.pem" ubuntu@ec2-3-133-88-210.us-east-2.compute.amazonaws.com
-```
-3. nginx setup
-   1. Install nginx on EC2 instance using these commands,
-   ```
-   sudo apt-get update
-   sudo apt-get install nginx
-   ```
-   2. Above will install nginx as well as run it. Check status of nginx using
-   ```
-   sudo service nginx status
-   ```
-   3. Here are the commands to start/stop/restart nginx
-   ```
-   sudo service nginx start
-   sudo service nginx stop
-   sudo service nginx restart
-   ```
-   4. Now when you load cloud url in browser you will see a message saying "welcome to nginx" This means your nginx is setup and running.
-4. Now you need to copy all your code to EC2 instance. You can do this either using git or copy files using winscp. We will use winscp. You can download winscp from here: https://winscp.net/eng/download.php
-5. Once you connect to EC2 instance from winscp (instruction in a youtube video), you can now copy all code files into /home/ubuntu/ folder. The full path of your root folder is now: **/home/ubuntu/BangloreHomePrices**
-6.  After copying code on EC2 server now we can point nginx to load our property website by default. For below steps,
-    1. Create this file /etc/nginx/sites-available/bhp.conf. The file content looks like this,
-    ```
-    server {
-	    listen 80;
-            server_name bhp;
-            root /home/ubuntu/BangloreHomePrices/client;
-            index app.html;
-            location /api/ {
-                 rewrite ^/api(.*) $1 break;
-                 proxy_pass http://127.0.0.1:5000;
-            }
-    }
-    ```
-    2. Create symlink for this file in /etc/nginx/sites-enabled by running this command,
-    ```
-    sudo ln -v -s /etc/nginx/sites-available/bhp.conf
-    ```
-    3. Remove symlink for default file in /etc/nginx/sites-enabled directory,
-    ```
-    sudo unlink default
-    ```
-    4. Restart nginx,
-    ```
-    sudo service nginx restart
-    ```
-7. Now install python packages and start flask server
-```
-sudo apt-get install python3-pip
-sudo pip3 install -r /home/ubuntu/BangloreHomePrices/server/requirements.txt
-python3 /home/ubuntu/BangloreHomePrices/client/server.py
-```
-Running last command above will prompt that server is running on port 5000.
-8. Now just load your cloud url in browser (for me it was http://ec2-3-133-88-210.us-east-2.compute.amazonaws.com/) and this will be fully functional website running in production cloud environment
 
+## Technologies
 
+- Python
+- NumPy and Pandas
+- Matplotlib
+- scikit-learn
+- Jupyter Notebook
+- Flask
+- HTML, CSS, and JavaScript
+- Nginx (optional, for deployment)
 
+## Run locally
+
+1. Open a terminal in `BangloreHomePrices/server`.
+2. Create and activate a virtual environment:
+
+   ```bash
+   python3 -m venv .venv
+   source .venv/bin/activate
+   ```
+
+   On Windows PowerShell, use `.venv\Scripts\Activate.ps1` instead.
+
+3. Install the server dependencies:
+
+   ```bash
+   python -m pip install -r requirements.txt
+   ```
+
+4. Start the Flask server:
+
+   ```bash
+   python server.py
+   ```
+
+5. Open `client/app.html` in a browser. The UI expects the Flask API to be available on `http://127.0.0.1:5000`.
+
+> The saved model and `columns.json` are already included in `server/artifacts`, so retraining is not required to run the demo.
+
+## API endpoints
+
+### `GET /get_location_names`
+
+Returns the locations supported by the trained model.
+
+### `POST /predict_home_price`
+
+Accepts these form fields:
+
+- `total_sqft`: total area in square feet
+- `location`: supported location name
+- `bhk`: number of bedrooms
+- `bath`: number of bathrooms
+
+Example with `curl`:
+
+```bash
+curl -X POST http://127.0.0.1:5000/predict_home_price \
+  -d "total_sqft=1000" \
+  -d "location=1st Phase JP Nagar" \
+  -d "bhk=2" \
+  -d "bath=2"
+```
+
+## Deployment notes
+
+For an AWS EC2 deployment, install Nginx and configure it to serve the `client` directory while proxying `/api/` requests to Flask. Before deployment, update the Nginx `server_name`, verify the application paths, and restrict cloud firewall rules to only the ports you need.
+
+Do not commit private SSH keys, cloud credentials, or machine-specific paths to the repository.
+
+## Contributing
+
+Small improvements are welcome. Before opening a pull request:
+
+1. Keep changes focused on one problem.
+2. Update documentation when behavior or setup instructions change.
+3. Test the affected code locally.
+4. Use a clear commit message describing the change.
+5. Do not add credentials, private keys, or generated environment-specific files.

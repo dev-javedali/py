@@ -14,6 +14,7 @@ import os
 from selenium import webdriver
 
 from selenium.webdriver.common.keys import Keys
+from PIL import Image
 
 
 def fetch_image_urls_util(url,driver_path):
@@ -106,11 +107,13 @@ def fetch_image_urls(query:str, max_links_to_fetch:int, wd, sleep_between_intera
             break
         else:
             print("Found:", len(image_urls), "image links, looking for more ...")
-            time.sleep(30)
-            return
-            load_more_button = wd.find_element_by_css_selector(".mye4qd")
-            if load_more_button:
-                wd.execute_script("document.querySelector('.mye4qd').click();")
+            time.sleep(2)
+            try:
+                load_more_button = wd.find_element_by_css_selector(".mye4qd")
+                if load_more_button:
+                    wd.execute_script("arguments[0].click();", load_more_button)
+            except Exception:
+                pass
 
         # move the result startpoint further down
         results_start = image_count
@@ -122,10 +125,13 @@ def fetch_image_urls(query:str, max_links_to_fetch:int, wd, sleep_between_intera
 
 def persist_image(folder_path:str,url:str):
     try:
-        image_content = requests.get(url).content
+        response = requests.get(url, timeout=10)
+        response.raise_for_status()
+        image_content = response.content
 
     except Exception as e:
         print(f"ERROR - Could not download {url} - {e}")
+        return
 
     try:
         image_file = io.BytesIO(image_content)
