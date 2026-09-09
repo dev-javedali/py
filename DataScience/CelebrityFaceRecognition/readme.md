@@ -1,70 +1,49 @@
-# Celebrity Face Recognition
+![](ui_snapshot.jpg)
 
-![Celebrity Face Recognition UI](ui_snapshot.jpg)
+In this data science and machine learning project, we classify sports personalities. We restrict classification to only 5 people,
+1) Maria Sharapova
+2) Serena Williams
+3) Virat Kohli
+4) Roger Federer
+5) Lionel Messi
 
-This project demonstrates a computer-vision pipeline that classifies images of five sports personalities:
+Here is the folder structure,
+* UI : This contains ui website code 
+* server: Python flask server
+* model: Contains python notebook for model building
+* google_image_scrapping: code to scrape Google for images
+* images_dataset: Dataset used for our model training
 
-1. Maria Sharapova
-2. Serena Williams
-3. Virat Kohli
-4. Roger Federer
-5. Lionel Messi
+Technologies used in this project,
+1. Python
+2. Numpy and OpenCV for data cleaning
+3. Matplotlib & Seaborn for data visualization
+4. Sklearn for model building
+5. Jupyter notebook, visual studio code and pycharm as IDE
+6. Python flask for http server
+7. HTML/CSS/Javascript for UI
 
-## Project structure
 
-```text
-CelebrityFaceRecognition/
-├── UI/                         # Browser interface
-├── server/                     # Flask API and model artifacts
-├── model/                      # Model-training notebook and dependencies
-├── google_image_scrapping/     # Optional dataset collection utility
-└── images_dataset/             # Training images
+Here is the video playlist for entire project: https://www.youtube.com/playlist?list=PLeo1K3hjS3uvaRHZLl-jLovIjBP14QTXc
+
+
+## Running the image scraper
+
+The scraper requires Python, Selenium, Chrome, and a compatible ChromeDriver.
+Install the project dependencies first, then run the script from the
+`google_image_scrapping` directory.
+
+```bash
+pip install -r ../model/requirements.txt
+python image_download.py
 ```
 
-## Technologies
+The scraper validates downloaded files before saving them and uses deterministic
+filenames to avoid duplicate downloads. Use automated downloading only when it
+is permitted by the source website and applicable terms.
 
-- Python
-- NumPy
-- OpenCV
-- Matplotlib and Seaborn
-- scikit-learn
-- Jupyter Notebook
-- Flask
-- HTML, CSS, and JavaScript
+## Contributing
 
-## Running the server
-
-1. Open a terminal in `CelebrityFaceRecognition/server`.
-2. Create and activate a virtual environment:
-
-   ```bash
-   python3 -m venv .venv
-   source .venv/bin/activate
-   ```
-
-3. Install the dependencies required by the server/model environment.
-4. Start the Flask server:
-
-   ```bash
-   python server.py
-   ```
-
-The API listens on port `5000` by default.
-
-## Dataset collection
-
-The `google_image_scrapping` directory contains an optional utility for collecting training images. Web pages and browser automation tools can change over time, so use the script only when you need to rebuild the dataset and verify that the browser-driver version matches the installed Selenium version.
-
-Respect the terms of service and copyright/license requirements of image sources when collecting or redistributing datasets.
-
-## Notes for contributors
-
-- Keep model artifacts and datasets reproducible where possible.
-- Avoid committing personal data, credentials, or machine-specific browser-driver binaries.
-- Keep pull requests focused and explain how changes were tested.
-
-## Original tutorial
-
-The project was created as part of a data-science tutorial series. The original video playlist is available on YouTube:
-
-https://www.youtube.com/playlist?list=PLeo1K3hjS3uvaRHZLl-jLovIjBP14QTXc
+Contributions that improve reproducibility, documentation, model evaluation,
+accessibility, or code quality are welcome. Keep pull requests focused and
+include a short explanation of what changed and how it was tested.
